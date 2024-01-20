@@ -1,11 +1,9 @@
 <template>
   <div class="page">
-    <h1>Anasayfa</h1>
+    <h1>Randevular</h1>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'IndexPage',
-}
+export default {}
 </script>
