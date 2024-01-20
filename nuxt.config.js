@@ -1,4 +1,7 @@
 export default {
+  env: {
+    airtableToken: process.env.AIRTABLE_TOKEN,
+  },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
