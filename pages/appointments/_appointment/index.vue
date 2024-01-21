@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import AppointmentForm from '@/modules/appointments/containers/AppointmentForm.vue'
+import { AppointmentForm } from '@/modules/appointments'
 export default {
   components: {
     AppointmentForm,
@@ -26,8 +26,8 @@ export default {
     async loadData() {
       try {
         const appointmentId = this.$route.params.appointment
-        const response = await this.$axios.$get(
-          `https://api.airtable.com/v0/appgykZBGTF92MnHu/tblHgSMxTwolE6MeC/${appointmentId}`
+        const response = await this.$api.$get(
+          `/tblHgSMxTwolE6MeC/${appointmentId}`
         )
 
         this.apppointment = response

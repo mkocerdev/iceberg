@@ -1,7 +1,6 @@
 <template>
   <form class="appointment-form">
     <div class="appointment-form__group">
-      {{ data }}
       <div class="appointment-form__title">
         <h3>Kişisel Bilgiler</h3>
       </div>
@@ -43,12 +42,11 @@
       </div>
       <div class="appointment-form__row">
         <div class="appointment-form__col">
-          <AppFormInput
-            v-model="data.postcode"
-            label="Randevu Adresinin Posta Kodu"
-            type="text"
-            placeholder="Postcode"
-            required
+          <AppFormSelect
+            v-model="data.agent"
+            label="Randevu İle İlgilenecek Kişi"
+            placeholder="Randevu İle İlgilenecek Kişi"
+            :options="getAgents"
           />
         </div>
         <div class="appointment-form__col">
@@ -60,31 +58,34 @@
           />
         </div>
       </div>
-      <div class="appointment-form__row">
-        <div class="appointment-form__col">
-          <AppFormSelect
-            v-model="data.agent"
-            label="Randevu İle İlgilenecek Kişi"
-            placeholder="Randevu İle İlgilenecek Kişi"
-            :options="getAgents"
-          />
-        </div>
-      </div>
     </div>
     <div class="appointment-form__group">
       <div class="appointment-form__title">
         <h3>Adres Bilgiler</h3>
       </div>
+      <div class="appointment-form__row">
+        <div class="appointment-form__col">
+          <AppFormInput
+            v-model="data.postcode"
+            label="Randevu Adresinin Posta Kodu"
+            type="text"
+            placeholder="Postcode"
+            required
+            readonly
+          />
+        </div>
+      </div>
       <div class="appointment-form__row appointment-form__row--one">
         <div class="appointment-form__col">
-          <h2>Adres Seçimi</h2>
-
-          <GoogleMap />
+          <AppointmentMapSelect
+            :date="data.date"
+            @selected-address-postcode="data.postcode = $event"
+          />
         </div>
       </div>
       <div class="appointment-form__row">
         <div class="appointment-form__col">
-          <p>Ofisten Adrese olan uzaklık (km) Adrese ve randevu saatine göre</p>
+          <p>Ofisten Adrese olan uzaklık (km)</p>
           <p>Ofisten tahmini çıkış zamanı</p>
           <p>Randevu sonrası ofie dönüş tahmini (Randevu süresi 1 saat)</p>
         </div>
@@ -97,9 +98,12 @@
   </form>
 </template>
 <script>
+import AppointmentMapSelect from './AppointmentMapSelect.vue'
 // agent_id, agent_name, agent_surname
 const AGENT_API_FIELDS = `fields=fldhTMplMEa2ySjyG&fields=fld95ySgmju6mxzQm&fields=fld0SJakuGst7D5AK`
+
 export default {
+  components: { AppointmentMapSelect },
   data() {
     return {
       agents: null,
@@ -124,8 +128,8 @@ export default {
   },
   async mounted() {
     try {
-      const response = await this.$axios.$get(
-        `https://api.airtable.com/v0/appgykZBGTF92MnHu/tblxHgzNIVG1tMDBu?${AGENT_API_FIELDS}`
+      const response = await this.$api.$get(
+        `/tblxHgzNIVG1tMDBu?${AGENT_API_FIELDS}`
       )
       this.agents = response.records
     } catch (error) {

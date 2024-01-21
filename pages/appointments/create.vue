@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import AppointmentForm from '@/modules/appointments/containers/AppointmentForm.vue'
+import { AppointmentForm } from '@/modules/appointments'
 export default {
   components: {
     AppointmentForm,
