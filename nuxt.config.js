@@ -1,6 +1,8 @@
 export default {
   env: {
     airtableToken: process.env.AIRTABLE_TOKEN,
+    googleMapKey: process.env.GOOGLE_MAP_KEY,
+    authApiBaseUrl: process.env.API_BASE_URL,
   },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -36,7 +38,12 @@ export default {
   css: ['~/assets/styles/normalize.css', '~/assets/styles/globals.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['~/plugins/axios', '~/plugins/directives', '~/plugins/google-maps'],
+  plugins: [
+    '~/plugins/filters',
+    '~/plugins/directives',
+    '~/plugins/google-maps',
+    '~/plugins/axios',
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
