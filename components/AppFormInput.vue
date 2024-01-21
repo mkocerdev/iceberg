@@ -1,6 +1,6 @@
 <template>
   <div class="app-form-input">
-    <label v-if="label" class="app-form-input__label">{{ label }}</label>
+    <AppLabel v-if="label">{{ label }}</AppLabel>
     <input
       class="app-form-input__input"
       :value="value"
@@ -30,15 +30,6 @@ export default {
 .app-form-input {
   display: flex;
   flex-flow: column wrap;
-  &__label {
-    -webkit-align-items: center;
-    align-items: center;
-    display: -webkit-flex;
-    display: flex;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-  }
   &__input {
     border-radius: var(--radius);
     outline: none;

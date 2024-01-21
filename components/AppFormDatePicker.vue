@@ -1,6 +1,6 @@
 <template>
   <div class="app-form-datepicker">
-    <label v-if="label" class="app-form-datepicker__label">{{ label }}</label>
+    <AppLabel v-if="label">{{ label }}</AppLabel>
     <div class="app-form-datepicker__date">
       <date-picker v-bind="$attrs" v-on="$listeners" />
     </div>
@@ -44,15 +44,6 @@ export default {
   position: relative;
   display: flex;
   flex-flow: column wrap;
-  &__label {
-    -webkit-align-items: center;
-    align-items: center;
-    display: -webkit-flex;
-    display: flex;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-  }
   &__date {
     cursor: pointer;
   }

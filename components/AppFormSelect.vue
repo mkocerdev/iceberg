@@ -1,6 +1,6 @@
 <template>
   <div class="app-form-select">
-    <label v-if="label" class="app-form-select__label">{{ label }}</label>
+    <AppLabel v-if="label">{{ label }}</AppLabel>
     <div
       v-click-outside="closeMenu"
       class="app-form-select__selected"
@@ -73,15 +73,6 @@ export default {
   position: relative;
   display: flex;
   flex-flow: column wrap;
-  &__label {
-    -webkit-align-items: center;
-    align-items: center;
-    display: -webkit-flex;
-    display: flex;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-  }
   &__selected {
     position: relative;
     ::v-deep {
