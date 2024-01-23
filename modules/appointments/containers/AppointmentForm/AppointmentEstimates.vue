@@ -60,7 +60,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .appointment-info {
   height: 100%;
   padding: 2rem 2rem;
