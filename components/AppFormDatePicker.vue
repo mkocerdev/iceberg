@@ -55,7 +55,7 @@ export default {
       border-radius: var(--radius);
       outline: none;
       box-shadow: none;
-      border: 1px solid #cdcdcd;
+      border: 1px solid #ebecee;
       padding: 0 1rem;
       height: 50px;
       background: #fff;
