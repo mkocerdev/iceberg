@@ -20,12 +20,12 @@ export default {
   cursor: pointer;
   display: flex;
   align-items: center;
-  height: 50px;
+  height: 40px;
   outline: none;
   border: none;
   border-radius: var(--radius);
   background-color: #000;
   color: #fff;
-  padding: 0 3rem;
+  padding: 0 1rem;
 }
 </style>
