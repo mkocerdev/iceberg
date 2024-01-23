@@ -1,46 +1,21 @@
 <template>
   <div>
-    <div v-if="date && direction">
-      <AppLabel>Randevu Hesaplamaları</AppLabel>
-      <div>
-        <AppLabel> Adrese olan mesafe: </AppLabel>
-        <p>{{ getDistanceToDestination }}</p>
-      </div>
-      <div>
-        <AppLabel> Adrese olan süre: </AppLabel>
-        <p>{{ getDurationToDestination }}</p>
-      </div>
-      <div>
-        <AppLabel> Tahimini ofisten çıkış zamanı: </AppLabel>
-        <p>
-          {{ getEstimatedTimeToOutOfOffice | formatDate }}
-        </p>
-      </div>
-      <div>
-        <AppLabel>
-          Randevu Sonrası Ofise dönüş tahmini (Randevu süresi 1 saat olarak
-          hesaplanmıştır):
-        </AppLabel>
-        <p>{{ getEstimatedTimeBackToOffice | formatDate }}</p>
-      </div>
-    </div>
-    <div>
-      <AppLabel>Randevu Adresi</AppLabel>
-      <GmapMap
-        ref="map"
-        :center="center"
-        :zoom="8"
-        style="width: 100%; height: 400px"
-        @click="selectDestination"
-      >
-        <DirectionsRenderer
-          :origin="origin?.position"
-          :destination="destination?.position"
-          travel-mode="DRIVING"
-          @get-direction="getDirection"
-        />
-      </GmapMap>
-    </div>
+    <GmapMap
+      id="map"
+      ref="map"
+      :center="center"
+      :zoom="8"
+      style="width: 100%; height: 500px"
+      @click="selectDestination"
+    >
+      <GmapMarker :position="origin.position" />
+      <DirectionsRenderer
+        :origin="origin.position"
+        :destination="destination?.position"
+        travel-mode="DRIVING"
+        @return-direction="handleDirection"
+      />
+    </GmapMap>
   </div>
 </template>
 
@@ -70,29 +45,16 @@ export default {
       },
       // Destination Location
       destination: null,
+
+      // Direction route to destination
       direction: null,
     }
   },
-  computed: {
-    getDistanceToDestination() {
-      return this.direction.routes[0].legs[0].distance.text
-    },
-    getDurationToDestination() {
-      return this.direction.routes[0].legs[0].duration.text
-    },
-    getEstimatedTimeToOutOfOffice() {
-      const date = new Date(this.date)
-      const duration = this.direction.routes[0].legs[0].duration.value
-      return this.subtractSeconds(date, duration)
-    },
-    getEstimatedTimeBackToOffice() {
-      const date = new Date(this.date)
-      const duration = this.direction.routes[0].legs[0].duration.value
-
-      // duration * add back to office + 1 hour default appoinment time
-      const totalTime = duration * 2 + 3600
-
-      return this.addSeconds(date, totalTime)
+  watch: {
+    date() {
+      if (this.destination) {
+        this.calculateAndReturnEstimates()
+      }
     },
   },
   methods: {
@@ -102,11 +64,26 @@ export default {
         lng: event.latLng.lng(),
       }
       this.destination = { position: marker }
-      this.getPostCodeByPosition(this.destination)
     },
-    async getPostCodeByPosition(marker) {
+    handleDirection(event) {
+      this.direction = event
+      this.calculateAndReturnEstimates()
+    },
+    async calculateAndReturnEstimates() {
+      const data = {
+        postcode: await this.getDestinationPostcode(),
+        estimates: {
+          distance: await this.getDistanceToDestination(),
+          duration: await this.getDurationToDestination(),
+          outOfficeDate: await this.getEstimatedTimeToOutOfOffice(),
+          backOfficeDate: await this.getEstimatedTimeBackToOffice(),
+        },
+      }
+      this.$emit('return-estimates', data)
+    },
+    async getDestinationPostcode() {
       try {
-        const { lat, lng } = marker?.position
+        const { lat, lng } = this.destination.position
 
         const response = await this.$axios.$get(
           `https://api.postcodes.io/postcodes?lon=${lng}&lat=${lat}`
@@ -114,24 +91,57 @@ export default {
         const result = response?.result
         if (result) {
           const addressPostcode = result[0].postcode
-          this.$emit('selected-address-postcode', addressPostcode)
+          return addressPostcode
         }
       } catch (error) {
         console.log(error)
       }
     },
-    getDirection(direction) {
-      this.direction = direction
-      console.log(direction)
+    getDistanceToDestination() {
+      let value = ''
+      if (this.date && this.direction) {
+        value = this.direction.routes[0].legs[0].distance.text
+      }
+      return value
+    },
+    getDurationToDestination() {
+      let value = ''
+      if (this.date && this.direction) {
+        value = this.direction.routes[0].legs[0].duration.text
+      }
+      return value
+    },
+    getEstimatedTimeToOutOfOffice() {
+      let value = ''
+      if (this.date && this.direction) {
+        const date = new Date(this.date)
+        const duration = this.direction.routes[0].legs[0].duration.value
+
+        const estDate = this.subtractSeconds(date, duration)
+        value = this.$options.filters.formatDate(estDate)
+      }
+      return value
+    },
+    getEstimatedTimeBackToOffice() {
+      let value = ''
+      if (this.date && this.direction) {
+        const date = new Date(this.date)
+        const duration = this.direction.routes[0].legs[0].duration.value
+
+        // duration * add back to office + 1 hour default appoinment time
+        const totalTime = duration * 2 + 3600
+
+        const estDate = this.addSeconds(date, totalTime)
+        value = this.$options.filters.formatDate(estDate)
+      }
+      return value
     },
     addSeconds(date, minutes) {
       date.setSeconds(date.getSeconds() + minutes)
-
       return date
     },
     subtractSeconds(date, minutes) {
       date.setSeconds(date.getSeconds() - minutes)
-
       return date
     },
   },

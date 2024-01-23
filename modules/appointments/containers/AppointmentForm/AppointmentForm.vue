@@ -30,12 +30,13 @@
           <AppFormInput
             v-model="data.phone"
             label="Phone"
-            type="phone"
+            type="number"
             placeholder="Phone"
           />
         </div>
       </div>
     </div>
+    <hr class="appointment-form__hr" />
     <div class="appointment-form__group">
       <div class="appointment-form__title">
         <h3>Randevu Bilgiler</h3>
@@ -58,36 +59,23 @@
           />
         </div>
       </div>
-    </div>
-    <div class="appointment-form__group">
-      <div class="appointment-form__title">
-        <h3>Adres Bilgiler</h3>
-      </div>
-      <div class="appointment-form__row">
+
+      <AppLabel>Randevu Detayları</AppLabel>
+      <div class="appointment-form__row appointment-form__row--address">
+        <div v-if="!data.date" class="appointment-form__row-overlay">
+          Lütfen Önce Randevu Tarihi Seçiniz
+        </div>
         <div class="appointment-form__col">
-          <AppFormInput
-            v-model="data.postcode"
-            label="Randevu Adresinin Posta Kodu"
-            type="text"
-            placeholder="Postcode"
-            required
-            readonly
+          <AppointmentEstimates
+            :postcode="data.postcode"
+            :estimates="estimates"
           />
         </div>
-      </div>
-      <div class="appointment-form__row appointment-form__row--one">
         <div class="appointment-form__col">
           <AppointmentMapSelect
             :date="data.date"
-            @selected-address-postcode="data.postcode = $event"
+            @return-estimates="handleEstimates"
           />
-        </div>
-      </div>
-      <div class="appointment-form__row">
-        <div class="appointment-form__col">
-          <p>Ofisten Adrese olan uzaklık (km)</p>
-          <p>Ofisten tahmini çıkış zamanı</p>
-          <p>Randevu sonrası ofie dönüş tahmini (Randevu süresi 1 saat)</p>
         </div>
       </div>
     </div>
@@ -99,11 +87,12 @@
 </template>
 <script>
 import AppointmentMapSelect from './AppointmentMapSelect.vue'
+import AppointmentEstimates from './AppointmentEstimates.vue'
 // agent_id, agent_name, agent_surname
 const AGENT_API_FIELDS = `fields=fldhTMplMEa2ySjyG&fields=fld95ySgmju6mxzQm&fields=fld0SJakuGst7D5AK`
 
 export default {
-  components: { AppointmentMapSelect },
+  components: { AppointmentMapSelect, AppointmentEstimates },
   data() {
     return {
       agents: null,
@@ -115,6 +104,12 @@ export default {
         postcode: null,
         agent: null,
         date: null,
+      },
+      estimates: {
+        distance: null,
+        duration: null,
+        outOfficeDate: null,
+        backOfficeDate: null,
       },
     }
   },
@@ -136,19 +131,38 @@ export default {
       console.log(error)
     }
   },
+  methods: {
+    handleEstimates(data) {
+      const { postcode } = data
+      const { distance, duration, outOfficeDate, backOfficeDate } =
+        data.estimates
+      this.data.postcode = postcode
+      this.estimates.distance = distance
+      this.estimates.duration = duration
+      this.estimates.outOfficeDate = outOfficeDate
+      this.estimates.backOfficeDate = backOfficeDate
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>
 .appointment-form {
   background-color: #fdfdfd;
-  background-color: #f4f4f4;
+  border: 1px solid #ebecee;
   padding: 2rem;
   border-radius: var(--radius);
-  &__group {
-    margin-bottom: 2rem;
-    border-bottom: 1px solid #ddd4d4;
+  margin-bottom: 5rem;
+  &__hr {
+    border: 0;
+    height: 1px;
+    background: #ebecee;
+    margin: 2rem 0;
   }
   &__title {
+    h1 {
+      margin-top: 0;
+      margin-bottom: 3rem;
+    }
     h3 {
       margin-top: 0;
       margin-bottom: 2rem;
@@ -159,9 +173,32 @@ export default {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     margin-bottom: 2rem;
-    &--one {
-      grid-template-columns: 1fr;
+    position: relative;
+    &--address {
+      grid-template-columns: 2fr 5fr;
+      gap: 0;
+      background-color: #fff;
+      border: 1px solid #ebecee;
+      border-radius: var(--radius);
+      overflow: hidden;
     }
+    &-overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: #000000ba;
+      z-index: 1;
+      color: white;
+      font-weight: bold;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  &__submit {
+    display: flex;
+    justify-content: flex-end;
   }
 }
 </style>

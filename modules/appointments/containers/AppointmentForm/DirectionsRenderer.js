@@ -34,8 +34,8 @@ export default MapElementFactory({
           },
           (response, status) => {
             if (status !== 'OK') return
-            this.$emit('get-direction', response)
             directionsRenderer.setDirections(response)
+            this.$emit('return-direction', response)
           }
         )
       }
