@@ -8,7 +8,7 @@
     >
       <AppFormInput :value="getSelected?.label" readonly v-bind="$attrs" />
       <div class="app-form-select__selected-icon">
-        <img :src="require('@/assets/icons/chevron-down-solid.svg')" />
+        <AppIcon name="chevron-down" />
       </div>
     </div>
     <div
@@ -90,20 +90,22 @@ export default {
     }
   }
   &__menu {
+    z-index: 3;
     display: none;
     position: absolute;
     left: 0;
     right: 0;
-    top: 100%;
+    top: calc(100% - 4px);
     background: #fff;
-    border-radius: var(--radius);
-    border: 1px solid #cdcdcd;
+    border-bottom-left-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+    border: 1px solid #ebecee;
     cursor: pointer;
     max-height: 240px;
     overflow-x: scroll;
     &-option {
       padding: 1rem;
-      border-bottom: 1px solid #cdcdcd;
+      border-bottom: 1px solid #ebecee;
       font-size: 0.9rem;
       &:hover {
         background-color: #f4f4f4;
