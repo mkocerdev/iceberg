@@ -1,10 +1,10 @@
 // Containers
 
 import AppointmentForm from './containers/AppointmentForm/AppointmentForm.vue'
-import AppointmentMapSelect from './containers/AppointmentForm/AppointmentMapSelect.vue'
+import AppointmentList from './containers/AppointmentList/AppointmentList.vue'
 
 export {
   // Containers
   AppointmentForm,
-  AppointmentMapSelect,
+  AppointmentList,
 }
