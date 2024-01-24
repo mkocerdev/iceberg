@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <div class="app__sidebar">
-      <Sidebar />
+      <SideBar />
     </div>
     <div class="app__main">
       <Nuxt />
@@ -10,20 +10,25 @@
 </template>
 
 <script>
-import Sidebar from '@/modules/layout/Sidebar.vue'
+import SideBar from '@/modules/layout/SideBar'
 
 export default {
   components: {
-    Sidebar,
+    SideBar,
   },
 }
 </script>
 
 <style lang="scss" scoped>
 .app {
-  display: grid;
-  grid-template-columns: 250px 2fr;
+  margin-left: var(--sidebar-width);
   &__sidebar {
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
     background-color: black;
     text-align: center;
   }
