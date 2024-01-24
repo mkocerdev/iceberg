@@ -47,7 +47,7 @@
             v-model="data.agent"
             label="Randevu İle İlgilenecek Kişi"
             placeholder="Randevu İle İlgilenecek Kişi"
-            :options="getAgents"
+            :options="agentItems"
           />
         </div>
         <div class="appointment-form__col">
@@ -114,7 +114,7 @@ export default {
     }
   },
   computed: {
-    getAgents() {
+    agentItems() {
       return this.agents?.map((item) => ({
         label: `${item.fields?.agent_name} ${item.fields?.agent_surname}`,
         value: item.fields?.agent_id,
@@ -122,16 +122,19 @@ export default {
     },
   },
   async mounted() {
-    try {
-      const response = await this.$api.$get(
-        `/tblxHgzNIVG1tMDBu?${AGENT_API_FIELDS}`
-      )
-      this.agents = response.records
-    } catch (error) {
-      console.log(error)
-    }
+    await this.getAgents()
   },
   methods: {
+    async getAgents() {
+      try {
+        const response = await this.$api.$get(
+          `/tblxHgzNIVG1tMDBu?${AGENT_API_FIELDS}`
+        )
+        this.agents = response.records
+      } catch (error) {
+        console.log(error)
+      }
+    },
     handleEstimates(data) {
       const { postcode } = data
       const { distance, duration, outOfficeDate, backOfficeDate } =
