@@ -8,7 +8,7 @@
     >
       <AppFormInput :value="getSelected?.label" readonly v-bind="$attrs" />
       <div class="app-form-select__selected-icon">
-        <AppIcon name="chevron-down" />
+        <AppIcon name="chevron-down" width="10px" />
       </div>
     </div>
     <div
@@ -59,7 +59,7 @@ export default {
     selectOption(option) {
       this.menu = false
       this.selected = option
-      this.$emit('input', option)
+      this.$emit('input', option.value)
     },
     closeMenu() {
       this.menu = false
@@ -70,6 +70,7 @@ export default {
 
 <style lang="scss" scoped>
 .app-form-select {
+  cursor: pointer;
   position: relative;
   display: flex;
   flex-flow: column wrap;
