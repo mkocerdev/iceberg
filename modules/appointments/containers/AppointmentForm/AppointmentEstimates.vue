@@ -2,14 +2,16 @@
   <div class="appointment-info">
     <div class="appointment-address">
       <div class="appointment-address__location">
-        <p class="appointment-address__location-label">Office postcode</p>
+        <p class="appointment-address__location-label">Ofis adresi postcode</p>
         <p class="appointment-address__location-postcode">
           <AppIcon name="circle-dot" width="14px" style="color: #2196f3" />
           <span> CM27PJ</span>
         </p>
       </div>
       <div class="appointment-address__location">
-        <p class="appointment-address__location-label">Destination postcode</p>
+        <p class="appointment-address__location-label">
+          Randevu adresi postcode
+        </p>
         <p class="appointment-address__location-postcode">
           <AppIcon name="location-dot" width="12px" style="color: red" />
           <span> {{ postcode || '-' }}</span>
