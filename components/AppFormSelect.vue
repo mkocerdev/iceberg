@@ -6,7 +6,11 @@
       class="app-form-select__selected"
       @click="menu = !menu"
     >
-      <AppFormInput :value="getSelected?.label" readonly v-bind="$attrs" />
+      <AppFormInput
+        :value="getSelected?.label"
+        v-bind="$attrs"
+        v-on="$listeners"
+      />
       <div class="app-form-select__selected-icon">
         <AppIcon name="chevron-down" width="10px" />
       </div>
