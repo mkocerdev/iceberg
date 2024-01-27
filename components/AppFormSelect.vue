@@ -51,18 +51,20 @@ export default {
   data() {
     return {
       menu: false,
-      selected: null,
+      selected: this.value || null,
     }
   },
   computed: {
     getSelected() {
-      return this.selected
+      return this.value
+        ? this.options.find((item) => item.value === this.value)
+        : this.selected
     },
   },
   methods: {
     selectOption(option) {
       this.menu = false
-      this.selected = option
+      this.selected = option.value
       this.$emit('input', option.value)
     },
     closeMenu() {
