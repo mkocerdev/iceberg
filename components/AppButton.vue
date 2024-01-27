@@ -20,7 +20,7 @@ export default {
   cursor: pointer;
   display: flex;
   align-items: center;
-  height: 40px;
+  height: 50px;
   outline: none;
   border: none;
   border-radius: var(--radius);
