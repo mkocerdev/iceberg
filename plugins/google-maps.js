@@ -5,6 +5,7 @@ export default ({ env }) => {
     load: {
       key: env.googleMapKey,
       libraries: 'places',
+      language: 'tr',
     },
   })
 }
