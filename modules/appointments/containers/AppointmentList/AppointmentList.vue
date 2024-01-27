@@ -3,23 +3,31 @@
     <table class="appointment-table">
       <thead>
         <tr>
-          <th>Contact Name</th>
-          <th>Contact Phone</th>
-          <th>Contact Email</th>
+          <th>İsim</th>
+          <th>Soyisim</th>
+          <th>Email</th>
           <th>Agent</th>
-          <th>Appointment Poscode</th>
-          <th>Appointment Date</th>
-          <th>Actions</th>
+          <th>Postcode</th>
+          <th>Randevu Tarihi</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(item, index) in data" :key="index">
+        <tr
+          v-for="(item, index) in data"
+          :key="index"
+          :class="{ outdated: item.out_of_date }"
+        >
           <td>{{ item.contact_name_surname }}</td>
           <td>{{ item.contact_phone }}</td>
           <td>{{ item.contact_email }}</td>
           <td>{{ item.agent_name_surname }}</td>
           <td>{{ item.appointment_postcode }}</td>
-          <td>{{ item.appointment_date }}</td>
+          <td>
+            <template v-if="item.appointment_date">
+              {{ item.appointment_date | formatDate }}
+            </template>
+          </td>
           <td><AppButton label="Düzenle" @click="goToApointment(item)" /></td>
         </tr>
       </tbody>
@@ -62,6 +70,9 @@ export default {
   }
   tbody {
     tr {
+      &.outdated {
+        opacity: 0.4;
+      }
       td {
         text-align: left;
         font-size: 0.9rem;
