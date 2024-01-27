@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import dayjs from 'dayjs'
+require('dayjs/locale/tr')
+
+dayjs.locale('tr')
 
 export default function () {
   /**
