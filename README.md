@@ -4,7 +4,7 @@
 
 ### Prerequisites
 #### node - You should have 18.x installed.
-
+#### env - You must create a .env file copy from .env.example
 
 
 ```bash
