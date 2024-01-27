@@ -8,7 +8,11 @@
       style="width: 100%; height: 500px"
       @click="selectDestination"
     >
-      <GmapMarker v-if="!destination" :position="origin.position" />
+      <GmapMarker
+        v-if="!destination"
+        :position="origin.position"
+        :icon="origin.icon"
+      />
       <DirectionsRenderer
         :origin="origin.position"
         :destination="destination?.position"
@@ -42,6 +46,7 @@ export default {
       // Office location
       origin: {
         position: { lat: 51.7291573, lng: 0.4780267 },
+        icon: require('@/assets/images/office-marker.jpg'),
       },
       // Destination Location
       destination: null,
