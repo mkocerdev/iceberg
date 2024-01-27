@@ -1,25 +1,31 @@
 <template>
-  <form class="appointment-form">
+  <form class="appointment-form" @submit.prevent="$emit('submit')">
     <div class="appointment-form__group">
       <div class="appointment-form__title">
         <h3>Kişisel Bilgiler</h3>
       </div>
       <div class="appointment-form__row">
         <div class="appointment-form__col">
-          <AppFormInput v-model="data.name" label="İsim" placeholder="İsim" />
+          <AppFormInput
+            v-model="data.contact_name"
+            label="İsim"
+            placeholder="İsim"
+            required
+          />
         </div>
         <div class="appointment-form__col">
           <AppFormInput
-            v-model="data.surname"
+            v-model="data.contact_surname"
             label="Soyisim"
             placeholder="Soyisim"
+            required
           />
         </div>
       </div>
       <div class="appointment-form__row">
         <div class="appointment-form__col">
           <AppFormInput
-            v-model="data.email"
+            v-model="data.contact_email"
             label="Email"
             type="email"
             placeholder="Email"
@@ -28,10 +34,11 @@
         </div>
         <div class="appointment-form__col">
           <AppFormInput
-            v-model="data.phone"
+            v-model="data.contact_phone"
             label="Phone"
             type="number"
             placeholder="Phone"
+            required
           />
         </div>
       </div>
@@ -44,36 +51,43 @@
       <div class="appointment-form__row">
         <div class="appointment-form__col">
           <AppFormSelect
-            v-model="data.agent"
+            v-model="data.agent_id"
             label="Randevu İle İlgilenecek Kişi"
             placeholder="Randevu İle İlgilenecek Kişi"
             :options="agentItems"
+            required
           />
         </div>
         <div class="appointment-form__col">
           <AppFormDatePicker
-            v-model="data.date"
+            v-model="data.appointment_date"
+            :input-attr="{ required: 'true' }"
             label="Randevu Tarihi"
             type="datetime"
             placeholder="Randevu Tarihi"
+            required
           />
         </div>
       </div>
 
       <AppLabel>Randevu Detayları</AppLabel>
       <div class="appointment-form__row appointment-form__row--address">
-        <div v-if="!data.date" class="appointment-form__row-overlay">
+        <div
+          v-if="!data.appointment_date"
+          class="appointment-form__row-overlay"
+        >
           Lütfen Önce Randevu Tarihi Seçiniz
         </div>
         <div class="appointment-form__col">
           <AppointmentEstimates
-            :postcode="data.postcode"
+            :postcode="data.appointment_postcode"
             :estimates="estimates"
           />
         </div>
         <div class="appointment-form__col">
           <AppointmentMapSelect
-            :date="data.date"
+            :postcode="data.appointment_postcode"
+            :date="data.appointment_date"
             @return-estimates="handleEstimates"
           />
         </div>
@@ -81,7 +95,7 @@
     </div>
 
     <div class="appointment-form__submit">
-      <AppButton label="Randevu Oluştur" />
+      <AppButton label="Randevu Oluştur" type="submit" />
     </div>
   </form>
 </template>
@@ -93,17 +107,17 @@ const AGENT_API_FIELDS = `fields=fldhTMplMEa2ySjyG&fields=fld95ySgmju6mxzQm&fiel
 
 export default {
   components: { AppointmentMapSelect, AppointmentEstimates },
+  props: {
+    value: {
+      type: Object,
+      default: null,
+    },
+  },
   data() {
     return {
       agents: null,
       data: {
-        name: null,
-        surname: null,
-        email: null,
-        phone: null,
-        postcode: null,
-        agent: null,
-        date: null,
+        ...this.value,
       },
       estimates: {
         distance: null,
@@ -117,15 +131,24 @@ export default {
     agentItems() {
       return this.agents?.map((item) => ({
         label: `${item.fields?.agent_name} ${item.fields?.agent_surname}`,
-        value: item.fields?.agent_id,
+        value: item?.id,
       }))
     },
   },
+  watch: {
+    data: {
+      handler() {
+        this.$emit('input', this.data)
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   async mounted() {
-    await this.getAgents()
+    await this.loadAgents()
   },
   methods: {
-    async getAgents() {
+    async loadAgents() {
       try {
         const response = await this.$api.$get(
           `/tblxHgzNIVG1tMDBu?${AGENT_API_FIELDS}`
@@ -139,7 +162,7 @@ export default {
       const { postcode } = data
       const { distance, duration, outOfficeDate, backOfficeDate } =
         data.estimates
-      this.data.postcode = postcode
+      this.data.appointment_postcode = postcode
       this.estimates.distance = distance
       this.estimates.duration = duration
       this.estimates.outOfficeDate = outOfficeDate
