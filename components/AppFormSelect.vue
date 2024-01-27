@@ -14,6 +14,13 @@
       <div class="app-form-select__selected-icon">
         <AppIcon name="chevron-down" width="10px" />
       </div>
+      <button
+        v-if="getSelected"
+        class="app-form-select__selected-reset"
+        @click="resetOption"
+      >
+        <AppIcon name="circle-xmark" width="10px" />
+      </button>
     </div>
     <div
       class="app-form-select__menu"
@@ -25,7 +32,7 @@
         class="app-form-select__menu-option"
         @click="selectOption(option)"
       >
-        {{ option.label }}
+        {{ option?.label }}
       </div>
     </div>
   </div>
@@ -62,6 +69,11 @@ export default {
     },
   },
   methods: {
+    resetOption(e) {
+      e.preventDefault()
+      this.selected = null
+      this.$emit('input', null)
+    },
     selectOption(option) {
       this.menu = false
       this.selected = option.value
@@ -87,9 +99,22 @@ export default {
         cursor: pointer;
       }
     }
+    &-reset {
+      border: 0;
+      background-color: #fff;
+      position: absolute;
+      right: 25px;
+      top: 1px;
+      bottom: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      cursor: pointer;
+    }
     &-icon {
       position: absolute;
-      right: 20px;
+      right: 15px;
       top: 0;
       bottom: 0;
       display: flex;
