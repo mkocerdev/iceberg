@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <h1>Randevu Oluştur</h1>
-    <p v-if="$fetchState.pending">Fetching appointment...</p>
+    <p v-if="$fetchState.pending">Randevu Yükleniyor...</p>
     <div v-else class="page__form">
       <AppointmentForm v-model="data" @submit="handleSubmit" />
     </div>
