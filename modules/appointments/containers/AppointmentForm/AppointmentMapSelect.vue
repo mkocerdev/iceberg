@@ -8,7 +8,7 @@
       style="width: 100%; height: 500px"
       @click="selectDestination"
     >
-      <GmapMarker :position="origin.position" />
+      <GmapMarker v-if="!destination" :position="origin.position" />
       <DirectionsRenderer
         :origin="origin.position"
         :destination="destination?.position"
@@ -57,13 +57,23 @@ export default {
       }
     },
   },
+  async mounted() {
+    if (this.postcode) {
+      await this.getPositionByPostcode()
+    }
+  },
   methods: {
-    selectDestination(event) {
+    addDestinationMarker(lat, lng) {
       const marker = {
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng(),
+        lat,
+        lng,
       }
       this.destination = { position: marker }
+    },
+    selectDestination(event) {
+      const lat = event.latLng.lat()
+      const lng = event.latLng.lng()
+      this.addDestinationMarker(lat, lng)
     },
     handleDirection(event) {
       this.direction = event
@@ -71,7 +81,7 @@ export default {
     },
     async calculateAndReturnEstimates() {
       const data = {
-        postcode: await this.getDestinationPostcode(),
+        postcode: await this.getPostcodeByPosition(),
         estimates: {
           distance: await this.getDistanceToDestination(),
           duration: await this.getDurationToDestination(),
@@ -81,7 +91,22 @@ export default {
       }
       this.$emit('return-estimates', data)
     },
-    async getDestinationPostcode() {
+    async getPositionByPostcode() {
+      try {
+        const response = await this.$axios.$get(
+          `https://api.postcodes.io/postcodes/${this.postcode}/nearest`
+        )
+        const result = response?.result
+        if (result) {
+          const lat = result[0].latitude
+          const lng = result[0].longitude
+          this.addDestinationMarker(lat, lng)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async getPostcodeByPosition() {
       try {
         const { lat, lng } = this.destination.position
 
