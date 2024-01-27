@@ -2,7 +2,7 @@
 
 ## Build Setup
 
-# Prerequisites
+### Prerequisites
 node - You should have 18.x installed.
 
 ```bash
