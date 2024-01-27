@@ -88,7 +88,7 @@ export default {
 <style lang="scss" scoped>
 .appointment-head {
   display: grid;
-  grid-template-columns: 250px 250px;
+  grid-template-columns: auto auto;
   justify-content: flex-end;
   margin-bottom: 1rem;
   gap: 1rem;
